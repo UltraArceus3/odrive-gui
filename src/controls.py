@@ -26,6 +26,10 @@ def controls(odrv):
     states = {
         0: 'undefined',
         1: 'idle',
+        # 3: 'full calibration',
+        4: 'motor calibration',
+        6: 'index search',
+        7: 'offset calibration',
         8: 'loop',
     }
 
@@ -54,9 +58,6 @@ def controls(odrv):
         mtr_cfg = axis.motor.config
         enc_cfg = axis.encoder.config
         trp_cfg = axis.trap_traj.config
-
-        #with ui.row():
-            
 
         with ui.row():
             mode = ui.toggle(modes).bind_value(ctr_cfg, 'control_mode')
