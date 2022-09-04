@@ -7,13 +7,15 @@ from odrive.utils import dump_errors
 
 
 def get_errors(err, enums):
+    if err == 0:
+        return [enums.NONE.name]
     enum_vals = [x.value for x in sorted(enums, reverse=True)]
 
     detected_errors = []
     for i in enum_vals:
-        if err <= i:
+        if err < i or err == 0:
             continue
-        if err > i:
+        if err >= i:
             detected_errors.append(i)
             err -= i
 
@@ -69,15 +71,19 @@ def controls(odrv):
             + f'{axis.motor.current_control.Iq_measured} Amp'
         ))
 
-        error = ui.label()
         axi_err = get_errors(axis.error, enums.AxisError)
         mot_err = get_errors(axis.motor.error, enums.MotorError)
         enc_err = get_errors(axis.encoder.error, enums.EncoderError)
         con_err = get_errors(axis.controller.error, enums.ControllerError)
 
-        ui.timer(0.1, lambda: error.set_text(
-            "Motor Errors: " + str(mot_err)
-        ))
+        axis_error = ui.label()
+        ui.timer(1.0, lambda: axis_error.set_text("Axis Errors: " + ", ".join(axi_err)))
+        motor_error = ui.label()
+        ui.timer(1.0, lambda: motor_error.set_text("Motor Errors: " + ", ".join(mot_err)))
+        encoder_error = ui.label()
+        ui.timer(1.0, lambda: encoder_error.set_text("Encoder Errors: " + ", ".join(enc_err)))
+        controller_error = ui.label()
+        ui.timer(1.0, lambda: controller_error.set_text("Controller Errors: " + ", ".join(con_err)))
 
         ctr_cfg = axis.controller.config
         mtr_cfg = axis.motor.config
