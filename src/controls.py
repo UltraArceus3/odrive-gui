@@ -70,10 +70,10 @@ def controls(odrv):
         ))
 
         error = ui.label()
-        #axi_err = axis.error
+        axi_err = get_errors(axis.error, enums.AxisError)
         mot_err = get_errors(axis.motor.error, enums.MotorError)
-        #enc_err = axis.encoder.error
-        #con_err = axis.controller.error
+        enc_err = get_errors(axis.encoder.error, enums.EncoderError)
+        con_err = get_errors(axis.controller.error, enums.ControllerError)
 
         ui.timer(0.1, lambda: error.set_text(
             "Motor Errors: " + str(mot_err)
