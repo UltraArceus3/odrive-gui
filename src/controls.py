@@ -1,8 +1,23 @@
 from datetime import datetime
 from typing import Any
 
+import odrive.enums as enums
 from nicegui import ui
 from odrive.utils import dump_errors
+
+
+def get_errors(err, enums):
+    enum_vals = [x.value for x in sorted(enums, reverse=True)]
+
+    detected_errors = []
+    for i in enum_vals:
+        if err <= i:
+            continue
+        if err > i:
+            detected_errors.append(i)
+            err -= i
+
+    return [enums(x).name for x in detected_errors]
 
 
 def controls(odrv):
@@ -52,6 +67,16 @@ def controls(odrv):
         ui.timer(0.1, lambda: power.set_text(
             f'{axis.motor.current_control.Iq_measured * axis.motor.current_control.v_current_control_integral_q:.1f} W, '
             + f'{axis.motor.current_control.Iq_measured} Amp'
+        ))
+
+        error = ui.label()
+        #axi_err = axis.error
+        mot_err = get_errors(axis.motor.error, enums.MotorError)
+        #enc_err = axis.encoder.error
+        #con_err = axis.controller.error
+
+        ui.timer(0.1, lambda: error.set_text(
+            "Motor Errors: " + str(mot_err)
         ))
 
         ctr_cfg = axis.controller.config
