@@ -46,12 +46,17 @@ def controls(odrv):
 
         power = ui.label()
         ui.timer(0.1, lambda: power.set_text(
-            f'{axis.motor.current_control.Iq_measured * axis.motor.current_control.v_current_control_integral_q:.1f} W'))
+            f'{axis.motor.current_control.Iq_measured * axis.motor.current_control.v_current_control_integral_q:.1f} W, '
+            + f'{axis.motor.current_control.Iq_measured} Amp'
+        ))
 
         ctr_cfg = axis.controller.config
         mtr_cfg = axis.motor.config
         enc_cfg = axis.encoder.config
         trp_cfg = axis.trap_traj.config
+
+        #with ui.row():
+            
 
         with ui.row():
             mode = ui.toggle(modes).bind_value(ctr_cfg, 'control_mode')
